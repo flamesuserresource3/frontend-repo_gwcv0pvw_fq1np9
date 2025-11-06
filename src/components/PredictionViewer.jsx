@@ -1,5 +1,7 @@
 import React from 'react';
 import { Star, Orbit, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+import PredictionGalaxy from './PredictionGalaxy';
 
 const Mapping = {
   galaxy: {
@@ -31,7 +33,12 @@ export default function PredictionViewer({ result, confidence, selectedModel }) 
   const m = Mapping[result];
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35 }}
+      className="rounded-xl border border-white/10 bg-white/5 p-4"
+    >
       <div className="flex items-center justify-between">
         <div className="text-sm text-white/60">Model</div>
         <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/80">
@@ -40,10 +47,16 @@ export default function PredictionViewer({ result, confidence, selectedModel }) 
       </div>
 
       <div className="mt-4">
-        <div className={`inline-flex items-center gap-2 rounded-lg bg-gradient-to-r ${m.color} px-3 py-1.5 text-sm font-semibold text-black/90`}>
+        <motion.div
+          key={result}
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 220, damping: 18 }}
+          className={`inline-flex items-center gap-2 rounded-lg bg-gradient-to-r ${m.color} px-3 py-1.5 text-sm font-semibold text-black/90`}
+        >
           {m.icon}
           {result.toUpperCase()}
-        </div>
+        </motion.div>
         <p className="mt-3 text-sm text-white/80">{m.desc}</p>
       </div>
 
@@ -53,12 +66,18 @@ export default function PredictionViewer({ result, confidence, selectedModel }) 
           <span className="text-white/80">{Math.round(confidence * 100)}%</span>
         </div>
         <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
-          <div
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${Math.max(5, Math.round(confidence * 100))}%` }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
             className="h-full bg-gradient-to-r from-fuchsia-500 via-violet-500 to-sky-400"
-            style={{ width: `${Math.max(5, Math.round(confidence * 100))}%` }}
           />
         </div>
       </div>
-    </div>
+
+      <div className="mt-4">
+        <PredictionGalaxy label={result} />
+      </div>
+    </motion.div>
   );
 }
